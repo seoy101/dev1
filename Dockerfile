@@ -36,11 +36,11 @@ ADD launch.sh /bin/
 ADD sftp-useradd.sh /bin/
 
 #add web
-ADD dev-1.0-SNAPSHOT /web
+ADD dev-1.0-SNAPSHOT /web/
 
 #add exe
-ADD bwa /nfsdir
-ADD MT.fa /nfsdir
+ADD bwa /nfsdir/
+ADD MT.fa /nfsdir/
 
 
 #ENV PATH $PATH:/activator-dist-1.3.10/bin/

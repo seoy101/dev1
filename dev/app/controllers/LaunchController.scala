@@ -56,9 +56,10 @@ class LaunchController @Inject() (val messagesApi:MessagesApi) extends Controlle
              
                           val useradd=Seq("sftp-useradd.sh","user1","1111")
                           Process(useradd).run
-                          val now= new SimpleDateFormat("yyyy-mm-dd").format(new Date)
+                          val now= new SimpleDateFormat("yyyy-MM-dd").format(new Date).toString()
                           val job_name=bwa.data("exe_name")+"-"+now
                           val job_path="/nfsdir/"+job_name
+                          val data_name= "MT.fa"
                           Process("sudo mkdir "+job_path).run
                           Process("sudo chmod 777 "+job_path).run
                           
@@ -66,7 +67,7 @@ class LaunchController @Inject() (val messagesApi:MessagesApi) extends Controlle
                           bwa.data.keys.foreach{
                                   option => cmd+=bwa.data(option)+" "
                               }
-                          cmd+="MT.fa"
+                          cmd+=data_name+" | ls | grep "+data_name+". | xargs cp -t "+job_path+"/"
                           writingInnerSh(job_path,cmd)
                           writingDockerfile(job_path)
                           
@@ -81,8 +82,11 @@ class LaunchController @Inject() (val messagesApi:MessagesApi) extends Controlle
   def sftpresult(data:String) = Action{
     implicit request =>
    
-       data.split("|").foreach(file => Process("cp -r /nfsdir/"+file+" /home/user1/").run)
-       Ok("ok")
+ //      data.split("|").foreach(file => Process("cp -r /nfsdir/"+file+" /home/user1/").run)
+   
+      val copy= Seq("cp -r",data,"/user1")
+      Process(copy).run
+      Ok("ok")
        
       
   }
@@ -99,7 +103,7 @@ class LaunchController @Inject() (val messagesApi:MessagesApi) extends Controlle
      bw.newLine()
      bw.write("RUN apt-get install -y nfs-common")
      bw.newLine()
-     bw.write("WORKDIR "+file_path)
+     bw.write("WORKDIR "+file_path+"/")
      bw.newLine()
      bw.write("CMD ./innerSh.sh")
      bw.close()
@@ -112,14 +116,15 @@ class LaunchController @Inject() (val messagesApi:MessagesApi) extends Controlle
      bw.newLine()
      bw.write(cmd)
      bw.newLine()
-     bw.write("val=$(ls -I MT.fa -I bwa -I bwa-yyyy-mm-dd)")
-     bw.newLine()
-     bw.write("result=$(echo $val|tr ' ' '|')")
-     bw.newLine()
-     bw.write("curl 175.158.15.45:9000/result/$result")
-     bw.newLine()
+   //  bw.write("val=$(ls -I MT.fa -I bwa -I bwa-yyyy-mm-dd)")
+   //  bw.newLine()
+   //  bw.write("result=$(echo $val|tr ' ' '|')")
+    // bw.newLine()
+    // bw.write("curl 175.158.15.45:9000/result/$result")
+   //  bw.newLine()
      
-     
+     bw.write("curl 175.158.15.45:9000/result/"+file_path)
+     bw.newLine()
     // bw.newLine()
      /////////curl 추가 
      bw.close()

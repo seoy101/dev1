@@ -22,8 +22,11 @@ rm /etc/default/nfs-kernel-server
 mv /shellscript/services /etc/
 mv /shellscript/nfs-kernel-server /etc/default/
 
+chmod 777 /nfsdir
+
 service rpcbind start
 service nfs-kernel-server start
+
 
 
 cd /web/bin/

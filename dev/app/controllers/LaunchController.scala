@@ -56,7 +56,7 @@ class LaunchController @Inject() (val messagesApi:MessagesApi) extends Controlle
              
                           val useradd=Seq("sftp-useradd.sh","user1","1111")
                           Process(useradd).run
-                          val now= new SimpleDateFormat("yyyy-MM-dd").format(new Date).toString()
+                          val now= (new SimpleDateFormat("yyyy-MM-dd-hh")).format(new Date).toString()
                           val job_name=bwa.data("exe_name")+"-"+now
                           val job_path="/nfsdir/"+job_name
                           val data_name= "MT.fa"
@@ -84,7 +84,7 @@ class LaunchController @Inject() (val messagesApi:MessagesApi) extends Controlle
    
  //      data.split("|").foreach(file => Process("cp -r /nfsdir/"+file+" /home/user1/").run)
    
-      val copy= Seq("cp -r",data,"/user1")
+      val copy= Seq("cp -r",data,"/user1/")
       Process(copy).run
       Ok("ok")
        
